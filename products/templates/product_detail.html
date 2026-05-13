@@ -1,0 +1,166 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <!-- Image -->
+        <div class="col-md-6">
+            {% if product.image %}
+                <img src="{{ product.image.url }}"
+                     class="img-fluid rounded shadow w-100"
+                     style="max-height:400px; object-fit:cover;">
+            {% else %}
+                <div class="bg-light rounded d-flex align-items-center
+                            justify-content-center" style="height:400px;">
+                    <i class="fas fa-image fa-5x text-muted"></i>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Infos produit -->
+        <div class="col-md-6">
+            {% if product.category %}
+                <span class="badge bg-secondary mb-2">{{ product.category.name }}</span>
+            {% endif %}
+            <h2 class="fw-bold">{{ product.name }}</h2>
+
+            <!-- Note moyenne -->
+            {% if avg_rating %}
+                <div class="mb-2">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= avg_rating %}
+                            <i class="fas fa-star text-warning"></i>
+                        {% else %}
+                            <i class="far fa-star text-warning"></i>
+                        {% endif %}
+                    {% endfor %}
+                    <span class="text-muted">({{ reviews.count }} avis)</span>
+                </div>
+            {% endif %}
+
+            <hr>
+            <p class="text-muted">{{ product.description }}</p>
+
+            <!-- Prix -->
+            <div class="mb-3">
+                {% if product.old_price %}
+                    <span class="text-muted text-decoration-line-through fs-5 me-2">
+                        {{ product.old_price }} €
+                    </span>
+                    <span class="badge bg-danger me-2">
+                        -{{ product.discount_percentage }}%
+                    </span>
+                {% endif %}
+                <span class="price-tag fs-3">{{ product.price }} €</span>
+            </div>
+
+            <!-- Stock -->
+            {% if product.stock > 0 %}
+                <span class="badge bg-success mb-3">
+                    <i class="fas fa-check"></i> En stock ({{ product.stock }})
+                </span>
+            {% else %}
+                <span class="badge bg-danger mb-3">Rupture de stock</span>
+            {% endif %}
+
+            <!-- Boutons -->
+            <div class="d-flex gap-3 mt-3 flex-wrap">
+                {% if product.stock > 0 %}
+                    <a href="{% url 'add_to_cart' product.id %}"
+                       class="btn btn-success btn-lg">
+                        <i class="fas fa-cart-plus"></i> Ajouter au panier
+                    </a>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    <a href="{% url 'toggle_wishlist' product.id %}"
+                       class="btn btn-lg {% if in_wishlist %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                        <i class="fas fa-heart"></i>
+                        {% if in_wishlist %}Retirer des favoris{% else %}Favoris{% endif %}
+                    </a>
+                {% endif %}
+                <a href="{% url 'product_list' %}"
+                   class="btn btn-outline-secondary btn-lg">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Produits similaires -->
+    {% if related_products %}
+    <div class="mt-5">
+        <h4 class="fw-bold mb-3">Produits similaires</h4>
+        <div class="row">
+            {% for p in related_products %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    {% if p.image %}
+                        <img src="{{ p.image.url }}" class="card-img-top"
+                             style="height:150px; object-fit:cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h6 class="fw-bold">{{ p.name }}</h6>
+                        <p class="text-success fw-bold">{{ p.price }} €</p>
+                        <a href="{% url 'product_detail' p.id %}"
+                           class="btn btn-primary btn-sm w-100">Voir</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Avis clients -->
+    <div class="mt-5">
+        <h4 class="fw-bold mb-3">
+            <i class="fas fa-comments"></i> Avis clients
+            ({{ reviews.count }})
+        </h4>
+
+        {% if user.is_authenticated %}
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h5>Laisser un avis</h5>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Envoyer
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+            <div class="alert alert-info">
+                <a href="{% url 'login' %}">Connectez-vous</a> pour laisser un avis.
+            </div>
+        {% endif %}
+
+        {% for review in reviews %}
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <strong><i class="fas fa-user-circle"></i> {{ review.user.username }}</strong>
+                    <small class="text-muted">{{ review.created_at|date:"d/m/Y" }}</small>
+                </div>
+                <div class="my-1">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= review.rating %}
+                            <i class="fas fa-star text-warning"></i>
+                        {% else %}
+                            <i class="far fa-star text-warning"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <p class="mb-0">{{ review.comment }}</p>
+            </div>
+        </div>
+        {% empty %}
+            <p class="text-muted">Aucun avis pour ce produit.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

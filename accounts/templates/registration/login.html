@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="fw-bold text-center mb-4">
+                        <i class="fas fa-sign-in-alt text-primary"></i> Connexion
+                    </h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="d-grid mt-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt"></i> Se connecter
+                            </button>
+                        </div>
+                    </form>
+                    <p class="text-center mt-3">
+                        Pas encore de compte ?
+                        <a href="{% url 'signup' %}">Créer un compte</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends 'layout.html' %}
+
+{% block title %}Commande #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">📦 Commande #{{ order.id }}</h2>
+        <a href="{% url 'order_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Mes commandes
+        </a>
+    </div>
+
+    <!-- Timeline statut -->
+    <div class="card shadow mb-4">
+        <div class="card-body p-4">
+            <h5 class="fw-bold mb-4">Suivi de commande</h5>
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div class="text-center">
+                    <div class="rounded-circle text-white d-flex align-items-center
+                                justify-content-center mx-auto mb-2
+                                {% if order.status in 'pending confirmed shipped delivered' %}bg-success{% else %}bg-secondary{% endif %}"
+                         style="width:50px; height:50px;">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <small class="fw-bold">Commandée</small>
+                </div>
+
+                <div class="flex-fill border-top border-2 mx-2
+                    {% if order.status in 'confirmed shipped delivered' %}border-success{% endif %}">
+                </div>
+
+                <div class="text-center">
+                    <div class="rounded-circle text-white d-flex align-items-center
+                                justify-content-center mx-auto mb-2
+                                {% if order.status in 'confirmed shipped delivered' %}bg-success{% else %}bg-secondary{% endif %}"
+                         style="width:50px; height:50px;">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <small class="fw-bold">Confirmée</small>
+                </div>
+
+                <div class="flex-fill border-top border-2 mx-2
+                    {% if order.status in 'shipped delivered' %}border-success{% endif %}">
+                </div>
+
+                <div class="text-center">
+                    <div class="rounded-circle text-white d-flex align-items-center
+                                justify-content-center mx-auto mb-2
+                                {% if order.status in 'shipped delivered' %}bg-success{% else %}bg-secondary{% endif %}"
+                         style="width:50px; height:50px;">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <small class="fw-bold">Expédiée</small>
+                </div>
+
+                <div class="flex-fill border-top border-2 mx-2
+                    {% if order.status == 'delivered' %}border-success{% endif %}">
+                </div>
+
+                <div class="text-center">
+                    <div class="rounded-circle text-white d-flex align-items-center
+                                justify-content-center mx-auto mb-2
+                                {% if order.status == 'delivered' %}bg-success{% else %}bg-secondary{% endif %}"
+                         style="width:50px; height:50px;">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <small class="fw-bold">Livrée</small>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0 fw-bold">Produits commandés</h5>
+                </div>
+                <div class="card-body">
+                    {% for item in order.items.all %}
+                    <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}"
+                                 width="80" height="80"
+                                 class="rounded me-3"
+                                 style="object-fit:cover;">
+                        {% endif %}
+                        <div class="flex-fill">
+                            <h6 class="fw-bold mb-0">{{ item.product.name }}</h6>
+                            <small class="text-muted">
+                                Prix unitaire : {{ item.price }} €
+                            </small>
+                            <br>
+                            <span class="badge bg-secondary">
+                                Quantité : {{ item.quantity }}
+                            </span>
+                        </div>
+                        <span class="fw-bold text-success fs-5">
+                            {{ item.subtotal }} €
+                        </span>
+                    </div>
+                    {% endfor %}
+                    <div class="d-flex justify-content-between fw-bold fs-5 mt-2">
+                        <span>Total</span>
+                        <span class="text-success">{{ order.total }} €</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow mb-3">
+                <div class="card-body">
+                    <h5 class="fw-bold">
+                        <i class="fas fa-info-circle text-primary"></i>
+                        Informations
+                    </h5>
+                    <hr>
+                    <p>
+                        <i class="fas fa-calendar text-muted"></i>
+                        <strong> Date :</strong>
+                        {{ order.created_at|date:"d/m/Y H:i" }}
+                    </p>
+                    <p>
+                        <i class="fas fa-phone text-muted"></i>
+                        <strong> Téléphone :</strong>
+                        {{ order.phone }}
+                    </p>
+                    <p>
+                        <i class="fas fa-map-marker-alt text-muted"></i>
+                        <strong> Adresse :</strong>
+                        {{ order.address }}
+                    </p>
+                    <p>
+                        <i class="fas fa-truck text-muted"></i>
+                        <strong> Livraison :</strong>
+                        <span class="text-success">Gratuite</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="d-grid">
+                <a href="{% url 'product_list' %}" class="btn btn-primary">
+                    <i class="fas fa-shopping-bag"></i> Continuer mes achats
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

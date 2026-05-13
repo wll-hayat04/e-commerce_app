@@ -1,0 +1,153 @@
+{% extends 'layout.html' %}
+
+{% block title %}Commander{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+
+    <!-- Barre de progression -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-center align-items-center gap-3">
+                <div class="text-center">
+                    <div class="rounded-circle bg-success text-white d-flex
+                                align-items-center justify-content-center mx-auto"
+                         style="width:40px; height:40px;">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <small class="text-success fw-bold">Panier</small>
+                </div>
+                <div class="flex-fill border-top border-success border-2"></div>
+                <div class="text-center">
+                    <div class="rounded-circle bg-primary text-white d-flex
+                                align-items-center justify-content-center mx-auto"
+                         style="width:40px; height:40px;">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <small class="text-primary fw-bold">Livraison</small>
+                </div>
+                <div class="flex-fill border-top border-2"></div>
+                <div class="text-center">
+                    <div class="rounded-circle bg-secondary text-white d-flex
+                                align-items-center justify-content-center mx-auto"
+                         style="width:40px; height:40px;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <small class="text-muted">Confirmation</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="fw-bold mb-4">💳 Finaliser la commande</h2>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card shadow mb-4">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-3">
+                        <i class="fas fa-map-marker-alt text-primary"></i>
+                        Informations de livraison
+                    </h4>
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-user"></i> Nom complet
+                            </label>
+                            <input type="text" class="form-control"
+                                   value="{{ user.username }}" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-envelope"></i> Email
+                            </label>
+                            <input type="email" class="form-control"
+                                   value="{{ user.email }}" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-phone"></i> Téléphone
+                            </label>
+                            {{ form.phone }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Adresse de livraison
+                            </label>
+                            {{ form.address }}
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            Paiement à la livraison disponible
+                        </div>
+
+                        <div class="d-grid mt-3">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check-circle"></i>
+                                Confirmer la commande ({{ total }} €)
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-shopping-cart"></i> Résumé
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for item in cart_items %}
+                    <div class="d-flex align-items-center mb-3">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}"
+                                 width="50" height="50"
+                                 class="rounded me-2"
+                                 style="object-fit:cover;">
+                        {% endif %}
+                        <div class="flex-fill">
+                            <span class="fw-bold">{{ item.product.name }}</span>
+                            <br>
+                            <small class="text-muted">x{{ item.quantity }}</small>
+                        </div>
+                        <span class="fw-bold text-success">{{ item.subtotal }} €</span>
+                    </div>
+                    {% endfor %}
+                    <hr>
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>Total</span>
+                        <span class="text-success">{{ total }} €</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-muted mt-1">
+                        <span><i class="fas fa-truck"></i> Livraison</span>
+                        <span class="text-success">Gratuite</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mt-3">
+                <div class="card-body">
+                    <h6 class="fw-bold">
+                        <i class="fas fa-shield-alt text-success"></i>
+                        Paiement sécurisé
+                    </h6>
+                    <p class="text-muted small mb-0">
+                        Vos données sont protégées et sécurisées.
+                        Paiement à la livraison disponible.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends 'layout.html' %}
+
+{% block title %}Nos Produits{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<div class="hero-section">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold">🛍️ Nos Produits</h1>
+        <p class="lead">Découvrez notre catalogue de qualité</p>
+        <form method="GET" action="{% url 'product_list' %}" class="mt-4">
+            <div class="input-group w-50 mx-auto">
+                <input type="text" name="q" class="form-control form-control-lg"
+                       placeholder="Rechercher un produit..."
+                       value="{{ query|default:'' }}">
+                <button class="btn btn-light btn-lg" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="container mb-5">
+
+    <!-- Produits vedettes -->
+    {% if featured and not query %}
+    <div class="mb-5">
+        <h3 class="fw-bold mb-3">⭐ Produits Vedettes</h3>
+        <div class="row">
+            {% for p in featured %}
+            <div class="col-md-3 mb-3">
+                <div class="card h-100 border-warning">
+                    {% if p.image %}
+                        <img src="{{ p.image.url }}" class="card-img-top" alt="{{ p.name }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="badge bg-warning text-dark mb-1">⭐ Vedette</span>
+                        <h6 class="fw-bold">{{ p.name }}</h6>
+                        <p class="text-success fw-bold">{{ p.price }} €</p>
+                        <a href="{% url 'product_detail' p.id %}"
+                           class="btn btn-warning btn-sm w-100">Voir</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Filtres et tri -->
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'product_list' %}"
+                   class="btn btn-sm {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                    Tous
+                </a>
+                {% for cat in categories %}
+                    <a href="?category={{ cat.id }}{% if query %}&q={{ query }}{% endif %}"
+                       class="btn btn-sm {% if selected_category == cat.id|stringformat:'s' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        {{ cat.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <form method="GET">
+                {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+                {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+                <select name="sort" class="form-select" onchange="this.form.submit()">
+                    <option value="">Trier par...</option>
+                    <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>
+                        Prix croissant
+                    </option>
+                    <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>
+                        Prix décroissant
+                    </option>
+                    <option value="newest" {% if sort == 'newest' %}selected{% endif %}>
+                        Plus récents
+                    </option>
+                </select>
+            </form>
+        </div>
+    </div>
+
+    {% if query %}
+        <p class="text-muted mb-3">
+            {{ products|length }} résultat(s) pour <strong>"{{ query }}"</strong>
+        </p>
+    {% endif %}
+
+    <!-- Liste produits -->
+    <div class="row">
+        {% for p in products %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div style="position:relative;">
+                    {% if p.image %}
+                        <img src="{{ p.image.url }}" class="card-img-top" alt="{{ p.name }}">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center
+                                    justify-content-center" style="height:200px;">
+                            <i class="fas fa-image fa-3x text-muted"></i>
+                        </div>
+                    {% endif %}
+                    {% if p.discount_percentage %}
+                        <span class="badge bg-danger"
+                              style="position:absolute; top:10px; left:10px; font-size:14px;">
+                            -{{ p.discount_percentage }}%
+                        </span>
+                    {% endif %}
+                    {% if p.stock == 0 %}
+                        <span class="badge bg-dark"
+                              style="position:absolute; top:10px; right:10px;">
+                            Rupture de stock
+                        </span>
+                    {% endif %}
+                </div>
+                <div class="card-body d-flex flex-column">
+                    {% if p.category %}
+                        <span class="badge bg-secondary mb-2" style="width:fit-content;">
+                            {{ p.category.name }}
+                        </span>
+                    {% endif %}
+                    <h5 class="card-title fw-bold">{{ p.name }}</h5>
+                    <p class="card-text text-muted small">
+                        {{ p.description|truncatechars:70 }}
+                    </p>
+                    <div class="mt-auto">
+                        {% if p.old_price %}
+                            <span class="text-muted text-decoration-line-through me-2">
+                                {{ p.old_price }} €
+                            </span>
+                        {% endif %}
+                        <span class="price-tag">{{ p.price }} €</span>
+                    </div>
+                    <div class="d-flex gap-2 mt-3">
+                        <a href="{% url 'product_detail' p.id %}"
+                           class="btn btn-primary btn-sm flex-fill">
+                            <i class="fas fa-eye"></i> Détails
+                        </a>
+                        {% if p.stock > 0 %}
+                            <a href="{% url 'add_to_cart' p.id %}"
+                               class="btn btn-success btn-sm flex-fill">
+                                <i class="fas fa-cart-plus"></i> Ajouter
+                            </a>
+                        {% else %}
+                            <button class="btn btn-secondary btn-sm flex-fill" disabled>
+                                Indisponible
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted">Aucun produit trouvé</h4>
+                <a href="{% url 'product_list' %}" class="btn btn-primary mt-3">
+                    Voir tous les produits
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

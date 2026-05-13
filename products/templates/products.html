@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Liste des produits{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <h1>Nos Produits</h1>
+    <a href="{% url 'category_list' %}">Voir les catégories</a>
+    <div class="row mt-3">
+        {% for product in products %}
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
+                    </h5>
+                    <p class="card-text">Prix : {{ product.price }} €</p>
+                    <p class="card-text">
+                        {% if product.category %}
+                            Catégorie :
+                            <a href="{% url 'category_detail' product.category.id %}">
+                                {{ product.category.name }}
+                            </a>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <p>Aucun produit disponible.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

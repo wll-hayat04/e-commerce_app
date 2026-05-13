@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="jumbotron mt-3">
+        <h1 class="display-3">Bienvenue sur E-commerce</h1>
+        <p class="lead">Découvrez notre catalogue de produits.</p>
+        <hr class="my-4">
+        <p>Parcourez nos produits et trouvez ce qu'il vous faut.</p>
+        <p class="lead">
+            <a class="btn btn-primary btn-lg" href="{% url 'products' %}" role="button">
+                Voir les produits
+            </a>
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} | E-Commerce</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* ===== VARIABLES COULEURS ===== */
+        :root {
+            --primary:       #f97316;   /* orange vif */
+            --primary-dark:  #c2410c;   /* orange foncé */
+            --primary-light: #fed7aa;   /* orange pâle */
+            --accent:        #fbbf24;   /* doré */
+            --dark:          #1c1917;   /* presque noir chaud */
+            --dark2:         #292524;
+            --text-muted:    #a8a29e;
+            --bg:            #fafaf9;
+            --white:         #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            font-family: 'Segoe UI', sans-serif;
+            color: #1c1917;
+        }
+
+        /* ===== TOP BAR ===== */
+        .top-bar {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            font-size: 12px;
+            padding: 6px 0;
+            color: white;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            background: var(--dark) !important;
+            box-shadow: 0 2px 20px rgba(249,115,22,0.25);
+            padding: 12px 0;
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--accent) !important;
+        }
+        .navbar-brand:hover { color: var(--primary) !important; }
+
+        .nav-link {
+            font-weight: 500;
+            color: #e7e5e4 !important;
+            transition: color 0.3s;
+        }
+        .nav-link:hover { color: var(--accent) !important; }
+
+        .navbar .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+        .navbar .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            transform: translateY(-1px);
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            border-top: 3px solid var(--primary);
+        }
+        .dropdown-item:hover {
+            background-color: var(--primary-light);
+            border-radius: 8px;
+            color: var(--primary-dark);
+        }
+
+        /* Avatar utilisateur */
+        .user-avatar {
+            background: linear-gradient(135deg, var(--primary), var(--accent)) !important;
+        }
+
+        /* ===== SEARCH ===== */
+        .search-input {
+            border-radius: 25px 0 0 25px !important;
+            border: 2px solid var(--primary);
+            border-right: none;
+            padding: 8px 18px;
+            background: #292524;
+            color: white;
+        }
+        .search-input::placeholder { color: var(--text-muted); }
+        .search-input:focus {
+            box-shadow: none;
+            border-color: var(--accent);
+            background: #292524;
+            color: white;
+        }
+        .search-btn {
+            border-radius: 0 25px 25px 0 !important;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            color: white;
+            padding: 8px 18px;
+        }
+        .search-btn:hover {
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero-section {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 50%, #3b1f0a 100%);
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(249,115,22,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .hero-section h1 { text-shadow: 0 2px 20px rgba(249,115,22,0.4); }
+        .hero-section .btn-light {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            color: white;
+            font-weight: 700;
+            border-radius: 30px;
+            padding: 10px 30px;
+        }
+        .hero-section .btn-light:hover {
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            transform: translateY(-2px);
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            background: white;
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 35px rgba(249,115,22,0.2);
+        }
+        .card-img-top {
+            border-radius: 16px 16px 0 0;
+            height: 200px;
+            object-fit: cover;
+        }
+        .card-body { padding: 1.2rem; }
+
+        /* Bordure top orange au hover */
+        .card:hover { border-top: 3px solid var(--primary); }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            border-radius: 25px;
+            padding: 8px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(249,115,22,0.35);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            border: none;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--accent), #f59e0b);
+            border: none;
+            color: var(--dark);
+        }
+
+        .btn-outline-primary {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* ===== PRIX ===== */
+        .price-tag {
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        /* ===== BADGES ===== */
+        .badge.bg-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+        }
+        .badge.bg-warning {
+            background: linear-gradient(135deg, var(--accent), #f59e0b) !important;
+            color: var(--dark) !important;
+        }
+
+        /* ===== ALERTS ===== */
+        .alert {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: linear-gradient(135deg, var(--dark), var(--dark2));
+            color: white;
+            padding: 50px 0 20px;
+            margin-top: 60px;
+        }
+        footer a { transition: color 0.3s; }
+        footer a:hover { color: var(--primary) !important; }
+
+        .footer-divider { border-color: rgba(255,255,255,0.1); }
+
+        .social-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(249,115,22,0.15);
+            border: 1px solid rgba(249,115,22,0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: var(--primary) !important;
+        }
+        .social-icon:hover {
+            background: var(--primary);
+            color: white !important;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(249,115,22,0.4);
+        }
+
+        /* ===== BACK TO TOP ===== */
+        .back-to-top {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 999;
+            display: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            box-shadow: 0 5px 15px rgba(249,115,22,0.5);
+        }
+        .back-to-top:hover { transform: translateY(-3px); }
+
+        /* ===== BADGE PANIER ===== */
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary) !important;
+        }
+
+        /* ===== NEWSLETTER ===== */
+        .newsletter-input {
+            border-radius: 25px 0 0 25px !important;
+            border: 1px solid rgba(249,115,22,0.3);
+            background: rgba(249,115,22,0.08);
+            color: white;
+            padding: 8px 15px;
+        }
+        .newsletter-input::placeholder { color: var(--text-muted); }
+        .newsletter-input:focus {
+            background: rgba(249,115,22,0.15);
+            color: white;
+            box-shadow: none;
+            border-color: var(--primary);
+        }
+        .newsletter-btn {
+            border-radius: 0 25px 25px 0 !important;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--primary), var(--accent));
+            border-radius: 4px;
+        }
+
+        /* ===== ACTIVE NAV ===== */
+        .nav-link.active-page {
+            color: var(--accent) !important;
+            font-weight: bold;
+        }
+
+        /* ===== SECTION TITLES ===== */
+        h3.fw-bold, h2.fw-bold {
+            position: relative;
+            display: inline-block;
+        }
+        h3.fw-bold::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        /* ===== CATEGORY BADGES ===== */
+        .badge.bg-secondary {
+            background: rgba(249,115,22,0.12) !important;
+            color: var(--primary) !important;
+            border: 1px solid rgba(249,115,22,0.3);
+        }
+
+        /* ===== FILTER BUTTONS ===== */
+        .btn-sm.btn-primary,
+        .btn-sm.btn-outline-primary {
+            border-radius: 20px;
+            padding: 5px 16px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== TOP BAR ===== -->
+<div class="top-bar text-white text-center">
+    <div class="container d-flex justify-content-between align-items-center">
+        <span>
+            <i class="fas fa-phone me-1"></i> +212 6 00 00 00 00
+            &nbsp;|&nbsp;
+            <i class="fas fa-envelope me-1"></i> contact@ecommerce.ma
+        </span>
+        <span>
+            <i class="fas fa-truck me-1"></i> Livraison gratuite &nbsp;|&nbsp;
+            <i class="fas fa-clock me-1"></i> Lun-Sam : 9h - 18h
+        </span>
+    </div>
+</div>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+
+        <!-- Logo -->
+        <a class="navbar-brand" href="{% url 'product_list' %}">
+            🛍️ E-Commerce
+        </a>
+
+        <!-- Toggle mobile -->
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+
+            <!-- Recherche -->
+            <form class="d-flex mx-auto" style="width:40%;"
+                  method="GET" action="{% url 'product_list' %}">
+                <input type="text" name="q"
+                       class="form-control search-input"
+                       placeholder="Rechercher un produit..."
+                       value="{{ request.GET.q|default:'' }}">
+                <button class="search-btn" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+
+            <!-- Liens droite -->
+            <ul class="navbar-nav ms-auto align-items-center gap-1">
+
+                {% if user.is_authenticated %}
+
+                    <!-- Favoris -->
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="{% url 'wishlist' %}">
+                            <i class="fas fa-heart" style="color:var(--primary);"></i>
+                            <span class="d-none d-lg-inline ms-1">Favoris</span>
+                        </a>
+                    </li>
+
+                    <!-- Panier -->
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="{% url 'cart' %}">
+                            <i class="fas fa-shopping-cart" style="color:var(--accent);"></i>
+                            {% with request.session.cart as cart %}
+                                {% if cart %}
+                                    <span class="badge cart-badge text-white">
+                                        {{ cart|length }}
+                                    </span>
+                                {% endif %}
+                            {% endwith %}
+                            <span class="d-none d-lg-inline ms-1">Panier</span>
+                        </a>
+                    </li>
+
+                    <!-- Dropdown utilisateur -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
+                           href="#" data-bs-toggle="dropdown">
+                            <div class="user-avatar rounded-circle d-flex align-items-center justify-content-center"
+                                 style="width:32px; height:32px;">
+                                <i class="fas fa-user text-white" style="font-size:14px;"></i>
+                            </div>
+                            <span class="d-none d-lg-inline">
+                                {{ user.first_name|default:user.username }}
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow" style="min-width:220px;">
+                            <li class="px-3 py-2">
+                                <small class="text-muted">Connecté en tant que</small><br>
+                                <strong>{{ user.username }}</strong><br>
+                                <small class="text-muted">{{ user.email }}</small>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'profile' %}">
+                                    <i class="fas fa-user me-2" style="color:var(--primary);"></i>Mon profil
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'order_list' %}">
+                                    <i class="fas fa-box text-success me-2"></i>Mes commandes
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'wishlist' %}">
+                                    <i class="fas fa-heart text-danger me-2"></i>Mes favoris
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'update_profile' %}">
+                                    <i class="fas fa-user-edit me-2" style="color:var(--accent);"></i>Modifier profil
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="{% url 'logout' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+
+                {% else %}
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">
+                            <i class="fas fa-sign-in-alt me-1"></i>Connexion
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary ms-1" href="{% url 'signup' %}">
+                            <i class="fas fa-user-plus me-1"></i>S'inscrire
+                        </a>
+                    </li>
+
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== MESSAGES ===== -->
+<main>
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-dismissible fade show
+                    {% if message.tags == 'success' %}alert-success
+                    {% elif message.tags == 'warning' %}alert-warning
+                    {% elif message.tags == 'error' %}alert-danger
+                    {% else %}alert-info{% endif %}">
+                    {% if message.tags == 'success' %}
+                        <i class="fas fa-check-circle me-2"></i>
+                    {% elif message.tags == 'warning' %}
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                    {% elif message.tags == 'error' %}
+                        <i class="fas fa-times-circle me-2"></i>
+                    {% else %}
+                        <i class="fas fa-info-circle me-2"></i>
+                    {% endif %}
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <div class="container">
+        <div class="row mb-4">
+
+            <!-- Logo et description -->
+            <div class="col-md-4 mb-4">
+                <h5 class="fw-bold mb-3 fs-4" style="color:var(--accent);">🛍️ E-Commerce</h5>
+                <p class="text-muted small mb-3">
+                    Votre boutique en ligne de confiance.
+                    Qualité, rapidité et sécurité garanties.
+                    Livraison gratuite partout au Maroc.
+                </p>
+                <div class="d-flex gap-2">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="col-md-2 mb-4">
+                <h6 class="fw-bold mb-3 text-white">Navigation</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <a href="{% url 'product_list' %}" class="text-muted text-decoration-none small">
+                            <i class="fas fa-chevron-right me-1 small" style="color:var(--primary);"></i>Produits
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="mb-2">
+                            <a href="{% url 'cart' %}" class="text-muted text-decoration-none small">
+                                <i class="fas fa-chevron-right me-1 small" style="color:var(--primary);"></i>Panier
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'order_list' %}" class="text-muted text-decoration-none small">
+                                <i class="fas fa-chevron-right me-1 small" style="color:var(--primary);"></i>Commandes
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'wishlist' %}" class="text-muted text-decoration-none small">
+                                <i class="fas fa-chevron-right me-1 small" style="color:var(--primary);"></i>Favoris
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'profile' %}" class="text-muted text-decoration-none small">
+                                <i class="fas fa-chevron-right me-1 small" style="color:var(--primary);"></i>Mon profil
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="mb-2">
+                            <a href="{% url 'login' %}" class="text-muted text-decoration-none small">
+                                <i class="fas fa-chevron-right me-1 small" style="color:var(--primary);"></i>Connexion
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'signup' %}" class="text-muted text-decoration-none small">
+                                <i class="fas fa-chevron-right me-1 small" style="color:var(--primary);"></i>Inscription
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- Contact -->
+            <div class="col-md-3 mb-4">
+                <h6 class="fw-bold mb-3 text-white">Contact</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2 text-muted small">
+                        <i class="fas fa-map-marker-alt me-2" style="color:var(--primary);"></i>Rabat, Maroc
+                    </li>
+                    <li class="mb-2 text-muted small">
+                        <i class="fas fa-phone me-2" style="color:var(--primary);"></i>+212 6 00 00 00 00
+                    </li>
+                    <li class="mb-2 text-muted small">
+                        <i class="fas fa-envelope me-2" style="color:var(--primary);"></i>contact@ecommerce.ma
+                    </li>
+                    <li class="mb-2 text-muted small">
+                        <i class="fas fa-clock me-2" style="color:var(--primary);"></i>Lun-Sam : 9h - 18h
+                    </li>
+                    <li class="mb-2 text-muted small">
+                        <i class="fas fa-headset me-2" style="color:var(--primary);"></i>Support 24h/7j
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="col-md-3 mb-4">
+                <h6 class="fw-bold mb-3 text-white">Newsletter</h6>
+                <p class="text-muted small mb-3">
+                    Recevez nos offres exclusives et nouveautés directement dans votre boîte mail.
+                </p>
+                <form method="post" action="{% url 'newsletter' %}">
+                    {% csrf_token %}
+                    <div class="input-group mb-3">
+                        <input type="email" name="email"
+                               class="form-control newsletter-input"
+                               placeholder="Votre email..." required>
+                        <button class="btn newsletter-btn text-white" type="submit">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+                <h6 class="fw-bold mb-2 text-white small">Paiement sécurisé</h6>
+                <div class="d-flex gap-2 align-items-center">
+                    <i class="fab fa-cc-visa fa-2x text-muted"></i>
+                    <i class="fab fa-cc-mastercard fa-2x text-muted"></i>
+                    <i class="fab fa-paypal fa-2x text-muted"></i>
+                    <i class="fas fa-lock" style="color:var(--primary);"></i>
+                </div>
+            </div>
+        </div>
+
+        <hr class="footer-divider">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pb-2">
+            <p class="text-muted small mb-0">© 2026 E-Commerce EMI. Tous droits réservés.</p>
+            <p class="text-muted small mb-0">
+                Développée par Hayat WALDI — EMI Rabat
+            </p>
+        </div>
+    </div>
+</footer>
+
+<!-- ===== BOUTON RETOUR EN HAUT ===== -->
+<button class="btn text-white back-to-top" id="backToTop"
+        onclick="window.scrollTo({top:0, behavior:'smooth'})">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    window.addEventListener('scroll', function() {
+        const btn = document.getElementById('backToTop');
+        btn.style.display = window.scrollY > 300 ? 'flex' : 'none';
+        btn.style.alignItems = 'center';
+        btn.style.justifyContent = 'center';
+    });
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            alert.style.transition = 'opacity 0.8s ease';
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 800);
+        });
+    }, 4000);
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el));
+</script>
+</body>
+</html>

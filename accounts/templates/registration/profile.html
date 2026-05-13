@@ -1,0 +1,138 @@
+{% extends 'layout.html' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+
+    <!-- En-tête profil -->
+    <div class="card shadow mb-4"
+         style="background: linear-gradient(135deg, #667eea, #764ba2);">
+        <div class="card-body text-white p-4">
+            <div class="d-flex align-items-center gap-4">
+                <div class="rounded-circle bg-white d-flex align-items-center
+                            justify-content-center"
+                     style="width:80px; height:80px;">
+                    <i class="fas fa-user fa-2x text-primary"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-0">
+                        {{ user.first_name }} {{ user.last_name }}
+                        {% if not user.first_name %}{{ user.username }}{% endif %}
+                    </h3>
+                    <p class="mb-0 opacity-75">{{ user.email }}</p>
+                    <small class="opacity-75">
+                        Membre depuis {{ user.date_joined|date:"d/m/Y" }}
+                    </small>
+                </div>
+                <div class="ms-auto">
+                    <a href="{% url 'update_profile' %}"
+                       class="btn btn-light">
+                        <i class="fas fa-user-edit"></i> Modifier
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <!-- Infos -->
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-info-circle"></i> Informations
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span><i class="fas fa-user text-primary"></i> Prénom</span>
+                            <strong>{{ user.first_name|default:"Non renseigné" }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span><i class="fas fa-user text-primary"></i> Nom</span>
+                            <strong>{{ user.last_name|default:"Non renseigné" }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span><i class="fas fa-at text-primary"></i> Username</span>
+                            <strong>{{ user.username }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span><i class="fas fa-envelope text-primary"></i> Email</span>
+                            <strong>{{ user.email }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span><i class="fas fa-shield-alt text-primary"></i> Staff</span>
+                            {% if user.is_staff %}
+                                <span class="badge bg-success">Oui</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Non</span>
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span><i class="fas fa-crown text-primary"></i> Admin</span>
+                            {% if user.is_superuser %}
+                                <span class="badge bg-danger">Oui</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Non</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions rapides -->
+        <div class="col-md-8">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="card shadow text-center p-4 h-100 border-primary">
+                        <i class="fas fa-box fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold">Mes Commandes</h5>
+                        <p class="text-muted small">Suivre vos commandes</p>
+                        <a href="{% url 'order_list' %}"
+                           class="btn btn-primary mt-auto">
+                            Voir mes commandes
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow text-center p-4 h-100 border-danger">
+                        <i class="fas fa-heart fa-3x text-danger mb-3"></i>
+                        <h5 class="fw-bold">Mes Favoris</h5>
+                        <p class="text-muted small">Vos produits favoris</p>
+                        <a href="{% url 'wishlist' %}"
+                           class="btn btn-danger mt-auto">
+                            Voir mes favoris
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow text-center p-4 h-100 border-success">
+                        <i class="fas fa-shopping-cart fa-3x text-success mb-3"></i>
+                        <h5 class="fw-bold">Mon Panier</h5>
+                        <p class="text-muted small">Voir votre panier</p>
+                        <a href="{% url 'cart' %}"
+                           class="btn btn-success mt-auto">
+                            Voir le panier
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow text-center p-4 h-100 border-warning">
+                        <i class="fas fa-user-edit fa-3x text-warning mb-3"></i>
+                        <h5 class="fw-bold">Modifier profil</h5>
+                        <p class="text-muted small">Mettre à jour vos infos</p>
+                        <a href="{% url 'update_profile' %}"
+                           class="btn btn-warning mt-auto">
+                            Modifier
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
